@@ -1,5 +1,4 @@
 from enums import Status
-from exceptions import WaterOverflowException
 
 
 class BaseJug:
@@ -38,50 +37,17 @@ class BaseJug:
 
     def fill(self):
         """Sets all capacity to content (full jar)"""
-        self._update_content(self.capacity)
+        self._update_content(self.space)
 
     def empty(self):
         """Sets all capacity to space (empty jar)"""
         self._update_content(-self.content)
 
-    def transfer_in(self, another):
-        """Gets water from another jar up to this jar free space (not capacity!)
-        Updates self AND ANOTHER this way until I design the orchestrator 'Juggler'
-        (one object should not update another, seems like an encapsulation issue).
 
-        Raises FullException if there are not enough space, returning the remaining water as err arg"""
-        # TODO: fix negatives bug
-        remaining_water = another.content - self.space
-        transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
-
-        self._update_content(transferable_water)
-        another._update_content(-transferable_water)
-
-        if remaining_water:
-            raise WaterOverflowException(
-                f"You got {remaining_water} gallons back.",
-                remaining_water=remaining_water
-            )
-
-    def transfer_out(self, another):
-        """Gives water to another jar up to the other jar free space (not capacity!)
-        Updates self AND ANOTHER this way until I design the orchestrator 'Juggler'
-        (one object should not update another, seems like an encapsulation issue).
-
-        Handles FullException without losing any water (to keep the measurement)"""
-
-        # TODO: fix negatives bug
-        remaining_water = self.content - another.space
-        transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
-
-        another._update_content(transferable_water)
-        self._update_content(-transferable_water)
-
-        if remaining_water:
-            raise WaterOverflowException(
-                f"You got {remaining_water} gallons back.",
-                remaining_water=remaining_water
-            )
+class Jug(BaseJug):
+    def __init__(self, capacity, name):
+        self.name = name
+        super().__init__(capacity)
 
 
 class Juggler:
@@ -101,22 +67,10 @@ class Juggler:
     def transfer(self, origin, destination):
         """ Checks remaining space
         and transfers from origin to destination as much as possible"""
-
-        # if destination.space == origin.content:
-        #     transferred_water = origin.content
-        # elif destination.space < origin.content:
-        #     transferred_water = destination.space
-        # elif destination.space > origin.content:
-        #     transferred_water = destination.space
         transferred_water = min([destination.space, origin.content])
 
         origin._update_content(-transferred_water)
         destination._update_content(transferred_water)
-
-class Jug(BaseJug):
-    def __init__(self, capacity, name):
-        self.name = name
-        super().__init__(capacity)
 
 
 if __name__ == '__main__':
