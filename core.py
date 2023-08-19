@@ -52,8 +52,8 @@ class Jug(BaseJug):
 
 class Juggler:
     def __init__(self, jar_x, jar_y, goal):
-        self.jar_x = Jug(jar_x, 'Jar-X')
-        self.jar_y = Jug(jar_y, 'Jar-Y')
+        self.jar_x = Jug(jar_x, "Jar-X")
+        self.jar_y = Jug(jar_y, "Jar-Y")
         self.goal = goal
 
     def fill(self, jar):
@@ -65,7 +65,7 @@ class Juggler:
         jar.empty()
 
     def transfer(self, origin, destination):
-        """ Checks remaining space
+        """Checks remaining space
         and transfers from origin to destination as much as possible"""
         transferred_water = min([destination.space, origin.content])
 
@@ -73,8 +73,8 @@ class Juggler:
         destination._update_content(transferred_water)
 
 
-if __name__ == '__main__':
-    j=Juggler(5, 3, 4)
+if __name__ == "__main__":
+    j = Juggler(5, 3, 4)
     print(j.jar_x, j.jar_y)
     j.fill(j.jar_x)  # llenas 5
     print(j.jar_x, j.jar_y)
@@ -86,5 +86,5 @@ if __name__ == '__main__':
     print(j.jar_x, j.jar_y)
     j.fill(j.jar_x)  # llenas 5
     print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y) # mandas j5 lo que entre a j3
+    j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
     print(j.jar_x, j.jar_y)
