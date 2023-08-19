@@ -3,6 +3,11 @@ CLI and API to interact with a Water Jug Riddle app
 
 
 ## Executing the app
+Many of these actions can be achieved using the commands in `Makefile`:
+* testing with several flavors
+* docker commands
+* etc.
+>In a Windows env you can use makefile installing `make` with Chocolatey: `choco install make`.
 
 #### Run the backend server dockerized
 ##### First time set up
