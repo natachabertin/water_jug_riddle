@@ -1,2 +1,2 @@
-# water_jug_riddle
+# Water Jug Riddle
 CLI and API to interact with a Water Jug Riddle app
