@@ -55,7 +55,7 @@ class Jug:
 
         if remaining_water:
             raise WaterOverflowException(
-                f"Only {self.space} gallons free. You get the rest back.",
+                f"Only {self.space} gallons free. You got the rest back.",
                 remaining_water=remaining_water
             )
 
@@ -65,8 +65,17 @@ class Jug:
         (one object should not update another, seems like an encapsulation issue).
 
         Handles FullException without losing any water (to keep the measurement)"""
-        self.content = self.content + 5
-        self.space = self.capacity - self.content
+        remaining_water = self.content - another.space
+        transferable_water = self.content if not remaining_water else self.content - remaining_water
+
+        another._update_content(transferable_water)
+        self._update_content(-transferable_water)
+
+        if remaining_water:
+            raise WaterOverflowException(
+                f"Only {another.space} gallons free. You got the rest back.",
+                remaining_water=remaining_water
+            )
 
 
 class Juggler:
