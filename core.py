@@ -48,14 +48,14 @@ class Jug:
 
         Raises FullException if there are not enough space, returning the remaining water as err arg"""
         remaining_water = another.content - self.space
-        transferable_water = another.content if not remaining_water else another.content - remaining_water
+        transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
 
         self._update_content(transferable_water)
         another._update_content(-transferable_water)
 
         if remaining_water:
             raise WaterOverflowException(
-                f"Only {self.space} gallons free. You got the rest back.",
+                f"You got {remaining_water} gallons back.",
                 remaining_water=remaining_water
             )
 
@@ -66,14 +66,14 @@ class Jug:
 
         Handles FullException without losing any water (to keep the measurement)"""
         remaining_water = self.content - another.space
-        transferable_water = self.content if not remaining_water else self.content - remaining_water
+        transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
 
         another._update_content(transferable_water)
         self._update_content(-transferable_water)
 
         if remaining_water:
             raise WaterOverflowException(
-                f"Only {another.space} gallons free. You got the rest back.",
+                f"You got {remaining_water} gallons back.",
                 remaining_water=remaining_water
             )
 
