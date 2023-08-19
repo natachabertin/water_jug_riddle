@@ -1,7 +1,5 @@
 from enums import Status
 
-import string
-
 
 class BaseJug:
     def __init__(self, capacity):
@@ -90,4 +88,3 @@ if __name__ == '__main__':
     print(j.jar_x, j.jar_y)
     j.transfer(j.jar_x, j.jar_y) # mandas j5 lo que entre a j3
     print(j.jar_x, j.jar_y)
-    print('checking black')
