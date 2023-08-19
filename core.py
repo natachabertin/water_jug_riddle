@@ -2,15 +2,18 @@ from enums import Status
 from exceptions import WaterOverflowException
 
 
-class Jug:
+class BaseJug:
     def __init__(self, capacity):
         self.capacity = capacity
         self.content = 0
         self.space = capacity
         self.status = Status.EMPTY
 
-    def __repr__(self):
+    def __str__(self):
         return f"|{'X|' * self.content}{' |' * self.space} - {self.status.name} - {self.content} of {self.capacity} ({self.space} free)"
+
+    def __repr__(self):
+        return f"<Jug {self.status.name} // {self.content} of {self.capacity} ({self.space} free)>"
 
     def _update_content(self, amount):
         """Updates content and space consistently.
@@ -39,7 +42,7 @@ class Jug:
 
     def empty(self):
         """Sets all capacity to space (empty jar)"""
-        self._update_content(-self.capacity)
+        self._update_content(-self.content)
 
     def transfer_in(self, another):
         """Gets water from another jar up to this jar free space (not capacity!)
@@ -47,6 +50,7 @@ class Jug:
         (one object should not update another, seems like an encapsulation issue).
 
         Raises FullException if there are not enough space, returning the remaining water as err arg"""
+        # TODO: fix negatives bug
         remaining_water = another.content - self.space
         transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
 
@@ -65,6 +69,8 @@ class Jug:
         (one object should not update another, seems like an encapsulation issue).
 
         Handles FullException without losing any water (to keep the measurement)"""
+
+        # TODO: fix negatives bug
         remaining_water = self.content - another.space
         transferable_water = self.content if remaining_water == 0 else self.content - abs(remaining_water)
 
@@ -79,35 +85,52 @@ class Jug:
 
 
 class Juggler:
-    def __init__(self, jar_a, jar_b, goal):
-        self.big_jar, self.little_jar = self._tag_jars(jar_a, jar_b)
+    def __init__(self, jar_x, jar_y, goal):
+        self.jar_x = Jug(jar_x, 'Jar-X')
+        self.jar_y = Jug(jar_y, 'Jar-Y')
         self.goal = goal
 
-    def _tag_jars(self, jar_a, jar_b):
-        return sorted([jar_a, jar_b], reverse=True)
-
     def fill(self, jar):
-        """Saca agua infinita y lo llena"""
-        pass
+        """Fills jar"""
+        jar.fill()
 
     def empty(self, jar):
-        """Tira el agua y lo deja en cero"""
-        pass
+        """Empties jar"""
+        jar.empty()
 
-    def transfer(origin, destination):
-        """Saca agua infinita y lo llena"""
+    def transfer(self, origin, destination):
+        """ Checks remaining space
+        and transfers from origin to destination as much as possible"""
 
+        # if destination.space == origin.content:
+        #     transferred_water = origin.content
+        # elif destination.space < origin.content:
+        #     transferred_water = destination.space
+        # elif destination.space > origin.content:
+        #     transferred_water = destination.space
+        transferred_water = min([destination.space, origin.content])
 
+        origin._update_content(-transferred_water)
+        destination._update_content(transferred_water)
 
-
-def brute_force(ja, jb, goal):
-    juggler = Juggler(ja, jb, goal)
-
-
+class Jug(BaseJug):
+    def __init__(self, capacity, name):
+        self.name = name
+        super().__init__(capacity)
 
 
 if __name__ == '__main__':
-    # print(brute_force(5,3,4))
-    big_jar = Jug(5)
-
-    print(big_jar)
+    j=Juggler(5, 3, 4)
+    print(j.jar_x, j.jar_y)
+    j.fill(j.jar_x)  # llenas 5
+    print(j.jar_x, j.jar_y)
+    j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
+    print(j.jar_x, j.jar_y)
+    j.empty(j.jar_y)  # vacias jarra3
+    print(j.jar_x, j.jar_y)
+    j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
+    print(j.jar_x, j.jar_y)
+    j.fill(j.jar_x)  # llenas 5
+    print(j.jar_x, j.jar_y)
+    j.transfer(j.jar_x, j.jar_y) # mandas j5 lo que entre a j3
+    print(j.jar_x, j.jar_y)
