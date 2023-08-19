@@ -10,16 +10,16 @@ repos:
     -   id: name-tests-test
     -   id: pretty-format-json
 -   repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
     -   id: black
         language_version: python3
 -   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.9.0
+    rev: v3.10.0
     hooks:
     -   id: reorder-python-imports
-        args: ["--application-directories", "."] # change last item for ".:tests" when created the dir
+        args: ["--application-directories", "src:tests"]
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.16.4
+    rev: v8.17.0
     hooks:
     -   id: gitleaks
