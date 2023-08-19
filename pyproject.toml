@@ -1,0 +1,17 @@
+[project]
+name = "water-jug-riddle"
+version = "0.1.0"
+authors = [
+    {name = "Natacha Bertin", email = "natachabertin92@gmail.com"},
+]
+description = "Yet another challenge"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["app"]
+
+[tool.coverage.run]
+omit=["tests/*"]
