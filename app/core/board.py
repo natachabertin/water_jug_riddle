@@ -64,20 +64,19 @@ class Juggler:
                 #TODO: yeah, this must be refact
             self._is_solvable(jar_x, jar_y, goal)
         except UnsolvableException as e:
-            print(e)
-            self.no_solution_response()
-
-        self.jar_x = Jug(jar_x, "Jar-X")
-        self.jar_y = Jug(jar_y, "Jar-Y")
-        self.goal = goal
+            raise
+        else:
+            self.jar_x = Jug(jar_x, "Jar-X")
+            self.jar_y = Jug(jar_y, "Jar-Y")
+            self.goal = goal
 
     def __repr__(self):
         return f"<Juggler [{self.jar_x}, {self.jar_y}] - {self.goal}>"
 
 
-    def no_solution_response(self):
+    def no_solution_response(self, reason):
         # TODO: move to some communicator class
-        return "No Solution"
+        return f"No Solution: {reason}"
 
     def ok_solution_response(self, solution):
         # TODO: move to some communicator class
@@ -163,7 +162,7 @@ class Juggler:
         if self._is_not_goal_div_by_jars_gcd(jar_x, jar_y, goal):
             raise UnsolvableException('Goal is not divisible by the GCD of both jars.')
         if self._is_goal_sum_of_both_jars(jar_x, jar_y, goal):
-            raise UnsolvableException('Goal is the sum of both jars, only can be achieved separately')
+            raise UnsolvableException('Goal is the sum of both jars, only can be measured separately')
         if self._is_goal_gt_bigger_jar(jar_x, jar_y, goal):
             raise UnsolvableException(f"Goal is bigger than the bigger jar. No space to hold {goal} gallons.")
 
@@ -197,22 +196,32 @@ class Juggler:
 
 
 if __name__ == "__main__":
-    # j = Juggler(5, 3, 4)
-    # j._solver_xy()
-    # jj = Juggler(5, 3, 4)
-    # jj._solver_yx()
-    s = Juggler(5, 3, 4)
-    print(s.solve())
-    # print(j.jar_x, j.jar_y)
-    # j.fill(j.jar_x)  # llenas 5
-    # print(j.jar_x, j.jar_y)
-    # j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
-    # print(j.jar_x, j.jar_y)
-    # j.empty(j.jar_y)  # vacias jarra3
-    # print(j.jar_x, j.jar_y)
-    # j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
-    # print(j.jar_x, j.jar_y)
-    # j.fill(j.jar_x)  # llenas 5
-    # print(j.jar_x, j.jar_y)
-    # j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
-    # print(j.jar_x, j.jar_y)
+    # s = Juggler(5, 3, 4)
+    # print('s',s.solve())
+    # q = Juggler(5, 3, 1)
+    # print('q',q.solve())
+    solvable_cases = [
+        [5,3,2],
+        [5,4,2],
+        [5,3,1],
+        [5,3,4],
+        [4,3,2],
+        [7,5,6],
+        [8,5,4],
+        [9,4,6],
+        [10,7,9],
+        [11,6,8],
+        [11,7,5],
+        [11,9,8],
+        [12,11,6],
+        [13,11,8],
+        [7,3,2],
+    ]
+    unsolvable_cases = [
+        [1,2,3], # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+        [6,4,3], # even both jars and goal odd >> should be covered as unsolvable
+        [5,3,7], # even both odd and goal even >> not divisible by gcd
+    ]
+    for case in solvable_cases:
+        print(case)
+        print(Juggler(*case).solve())
