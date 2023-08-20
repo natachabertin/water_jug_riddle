@@ -1,4 +1,4 @@
-from main import hello_world
+from server import hello_world
 
 
 class TestCase:

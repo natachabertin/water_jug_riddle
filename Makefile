@@ -29,3 +29,6 @@ test-missing:
 
 test-cov80:
 	pytest --cov=. --cov-fail-under=80
+
+cli:
+	python app/cli.py

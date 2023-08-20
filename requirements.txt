@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+typer[all]
 
 # dev
 pre-commit==3.3.2

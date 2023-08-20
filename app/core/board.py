@@ -1,4 +1,4 @@
-from enums import Status
+from core.utils.enums import Status
 
 
 class BaseJug:
