@@ -52,6 +52,7 @@ class Jug(BaseJug):
 
 class Juggler:
     def __init__(self, jar_x, jar_y, goal):
+        self._was_solved(jar_x, jar_y, goal)
         self.jar_x = Jug(jar_x, "Jar-X")
         self.jar_y = Jug(jar_y, "Jar-Y")
         self.goal = goal
@@ -72,7 +73,7 @@ class Juggler:
         origin._update_content(-transferred_water)
         destination._update_content(transferred_water)
 
-    def solver_xy(self):
+    def _solver_xy(self):
         """Always move from x to y"""
         step = 0
 
@@ -95,7 +96,7 @@ class Juggler:
             print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
 
 
-    def solver_yx(self):
+    def _solver_yx(self):
         """Always move from y to x"""
         step = 0
 
@@ -116,6 +117,26 @@ class Juggler:
             step += 1
 
             print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+
+    def _is_solvable(self):
+
+    def _was_solved(self, jar_x, jar_y, goal):
+        """NOT IMPLEMENTED
+        If there is time, implement a cache where it saves the results.
+        so you query the DB with the 3 values and if it was solved before,
+        retrieve process from cache instead of calculating again.
+        If can't be resolved, process is null.
+        """
+        solved_before = None
+        """select process
+         from historic
+         where goal = ?goal
+         and jars = ?(jar_x, jar_y)
+         or jars = ?(jar_y, jar_x)
+         """
+        if solved_before and not solved_before['process']:
+            raise Unsolvable()
+        return solved_before
 
 
 
