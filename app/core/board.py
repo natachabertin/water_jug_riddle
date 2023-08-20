@@ -12,7 +12,7 @@ class BaseJug:
         self.status = Status.EMPTY
 
     def __str__(self):
-        return f"|{'X|' * self.content}{' |' * self.space} - {self.status.name} - {self.content} of {self.capacity} ({self.space} free)"
+        return f"{self.name} ({self.capacity} gal):{self.content} "
 
     def __repr__(self):
         return f"<Jug {self.status.name} // {self.content} of {self.capacity} ({self.space} free)>"
@@ -68,6 +68,10 @@ class Juggler:
         self.jar_y = Jug(jar_y, "Jar-Y")
         self.goal = goal
 
+    def __repr__(self):
+        return f"<Juggler [{self.jar_x}, {self.jar_y}] - {self.goal}>"
+
+
     def no_solution_response(self):
         # TODO: move to some communicator class
         return "No Solution"
@@ -91,6 +95,11 @@ class Juggler:
 
         origin._update_content(-transferred_water)
         destination._update_content(transferred_water)
+
+    def _reset_jars(self):
+        """Empties both jars"""
+        self.jar_x.empty()
+        self.jar_y.empty()
 
     def _solver_xy(self):
         # TODO: move to solver (divide the movements from the proper algorithm)
@@ -142,9 +151,10 @@ class Juggler:
 
     def solve(self):
         x_to_y = self._solver_xy()
+        self._reset_jars()
         y_to_x = self._solver_yx()
         solution = min([x_to_y, y_to_x], key=itemgetter('steps'))
-        return self.ok_solution_response(solution)
+        return solution
 
     def _is_solvable(self):
         True
@@ -169,11 +179,10 @@ class Juggler:
 
 
 if __name__ == "__main__":
-    j = Juggler(5, 3, 4)
-    j._solver_xy()
-    jj = Juggler(5, 3, 4)
-    jj._solver_yx()
-    print('s')
+    # j = Juggler(5, 3, 4)
+    # j._solver_xy()
+    # jj = Juggler(5, 3, 4)
+    # jj._solver_yx()
     s = Juggler(5, 3, 4)
     print(s.solve())
     # print(j.jar_x, j.jar_y)
