@@ -72,19 +72,71 @@ class Juggler:
         origin._update_content(-transferred_water)
         destination._update_content(transferred_water)
 
+    def solver_xy(self):
+        """Always move from x to y"""
+        step = 0
+
+        while self.goal not in (self.jar_x.content, self.jar_y.content):
+            if self.jar_x.content == 0:
+                self.fill(self.jar_x)
+                step += 1
+                print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                continue
+
+            if self.jar_y.content == self.jar_y.capacity:
+                self.empty(self.jar_y)
+                step += 1
+                print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                continue
+
+            self.transfer(self.jar_x, self.jar_y)
+            step += 1
+
+            print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+
+
+    def solver_yx(self):
+        """Always move from y to x"""
+        step = 0
+
+        while self.goal not in (self.jar_x.content, self.jar_y.content):
+            if self.jar_y.content == 0:
+                self.fill(self.jar_y)
+                step += 1
+                print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+                continue
+
+            if self.jar_x.content == self.jar_x.capacity:
+                self.empty(self.jar_x)
+                step += 1
+                print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+                continue
+
+            self.transfer(self.jar_y, self.jar_x)
+            step += 1
+
+            print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+
+
+
+
+
 
 if __name__ == "__main__":
     j = Juggler(5, 3, 4)
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
-    print(j.jar_x, j.jar_y)
-    j.empty(j.jar_y)  # vacias jarra3
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
-    print(j.jar_x, j.jar_y)
+    j.solver_xy()
+    jj = Juggler(5, 3, 4)
+    jj.solver_yx()
+    # print(j.jar_x, j.jar_y)
+    # j.fill(j.jar_x)  # llenas 5
+    # print(j.jar_x, j.jar_y)
+    # j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
+    # print(j.jar_x, j.jar_y)
+    # j.empty(j.jar_y)  # vacias jarra3
+    # print(j.jar_x, j.jar_y)
+    # j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
+    # print(j.jar_x, j.jar_y)
+    # j.fill(j.jar_x)  # llenas 5
+    # print(j.jar_x, j.jar_y)
+    # j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
+    # print(j.jar_x, j.jar_y)
