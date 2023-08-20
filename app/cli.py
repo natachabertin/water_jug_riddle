@@ -43,7 +43,7 @@ def request_params():
 
 
 def mock_process():
-    """ implement jsonified status as data for the output and prettify it in cli with rich"""
+    """implement jsonified status as data for the output and prettify it in cli with rich"""
     j = Juggler(5, 3, 4)
     print(j.jar_x, j.jar_y)
     j.fill(j.jar_x)  # llenas 5

@@ -7,11 +7,8 @@ def solver(jx, jy, goal):
         steps = steps + 1
         return steps
 
-
-
     while goal not in (jx, jy):
         pass
-
 
     print(j.jar_x, j.jar_y)
     j.fill(j.jar_x)  # llenas 5
@@ -28,9 +25,5 @@ def solver(jx, jy, goal):
     print(j.jar_x, j.jar_y)
 
 
-
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     solver(5, 3, 4)

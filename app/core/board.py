@@ -61,7 +61,7 @@ class Juggler:
             solution = self._was_solved(jar_x, jar_y, goal)
             if solution:
                 self.ok_solution_response(solution)
-                #TODO: yeah, this must be refact
+                # TODO: yeah, this must be refact
             self._is_solvable(jar_x, jar_y, goal)
         except UnsolvableException as e:
             raise
@@ -72,7 +72,6 @@ class Juggler:
 
     def __repr__(self):
         return f"<Juggler [{self.jar_x}, {self.jar_y}] - {self.goal}>"
-
 
     def no_solution_response(self, reason):
         # TODO: move to some communicator class
@@ -113,18 +112,22 @@ class Juggler:
             if self.jar_x.content == 0:
                 self.fill(self.jar_x)
                 step += 1
-                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(
+                    f"Step {step} : {self.jar_x.content} - {self.jar_y.content}"
+                )
                 continue
 
             if self.jar_y.content == self.jar_y.capacity:
                 self.empty(self.jar_y)
                 step += 1
-                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(
+                    f"Step {step} : {self.jar_x.content} - {self.jar_y.content}"
+                )
                 continue
 
             self.transfer(self.jar_x, self.jar_y)
             step += 1
-            process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+            process.append(f"Step {step} : {self.jar_x.content} - {self.jar_y.content}")
         return dict(steps=step, process=process)
 
     def _solver_yx(self):
@@ -137,43 +140,51 @@ class Juggler:
             if self.jar_y.content == 0:
                 self.fill(self.jar_y)
                 step += 1
-                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(
+                    f"Step {step} : {self.jar_x.content} - {self.jar_y.content}"
+                )
                 continue
 
             if self.jar_x.content == self.jar_x.capacity:
                 self.empty(self.jar_x)
                 step += 1
-                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(
+                    f"Step {step} : {self.jar_x.content} - {self.jar_y.content}"
+                )
                 continue
 
             self.transfer(self.jar_y, self.jar_x)
             step += 1
-            process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+            process.append(f"Step {step} : {self.jar_x.content} - {self.jar_y.content}")
         return dict(steps=step, process=process)
 
     def solve(self):
         x_to_y = self._solver_xy()
         self._reset_jars()
         y_to_x = self._solver_yx()
-        solution = min([x_to_y, y_to_x], key=itemgetter('steps'))
+        solution = min([x_to_y, y_to_x], key=itemgetter("steps"))
         return solution
 
     def _is_solvable(self, jar_x, jar_y, goal):
         if self._is_not_goal_div_by_jars_gcd(jar_x, jar_y, goal):
-            raise UnsolvableException('Goal is not divisible by the GCD of both jars.')
+            raise UnsolvableException("Goal is not divisible by the GCD of both jars.")
         if self._is_goal_sum_of_both_jars(jar_x, jar_y, goal):
-            raise UnsolvableException('Goal is the sum of both jars, only can be measured separately')
+            raise UnsolvableException(
+                "Goal is the sum of both jars, only can be measured separately"
+            )
         if self._is_goal_gt_bigger_jar(jar_x, jar_y, goal):
-            raise UnsolvableException(f"Goal is bigger than the bigger jar. No space to hold {goal} gallons.")
+            raise UnsolvableException(
+                f"Goal is bigger than the bigger jar. No space to hold {goal} gallons."
+            )
 
-    def _is_not_goal_div_by_jars_gcd(self,jar_x, jar_y, goal):
+    def _is_not_goal_div_by_jars_gcd(self, jar_x, jar_y, goal):
         """Only is solvable if goal can be divided by the GCD of both jars capacity."""
         return goal % gcd(jar_x, jar_y) != 0
 
-    def _is_goal_sum_of_both_jars(self,jar_x, jar_y, goal):
+    def _is_goal_sum_of_both_jars(self, jar_x, jar_y, goal):
         return jar_x + jar_y == goal
 
-    def _is_goal_gt_bigger_jar(self,jar_x, jar_y, goal):
+    def _is_goal_gt_bigger_jar(self, jar_x, jar_y, goal):
         return goal > max(jar_x, jar_y)
 
     def _was_solved(self, jar_x, jar_y, goal):
@@ -190,7 +201,7 @@ class Juggler:
          and jars = ?(jar_x, jar_y)
          or jars = ?(jar_y, jar_x)
          """
-        if solved_before and not solved_before['process']:
+        if solved_before and not solved_before["process"]:
             raise UnsolvableException()
         return solved_before
 
@@ -201,26 +212,26 @@ if __name__ == "__main__":
     # q = Juggler(5, 3, 1)
     # print('q',q.solve())
     solvable_cases = [
-        [5,3,2],
-        [5,4,2],
-        [5,3,1],
-        [5,3,4],
-        [4,3,2],
-        [7,5,6],
-        [8,5,4],
-        [9,4,6],
-        [10,7,9],
-        [11,6,8],
-        [11,7,5],
-        [11,9,8],
-        [12,11,6],
-        [13,11,8],
-        [7,3,2],
+        [5, 3, 2],
+        [5, 4, 2],
+        [5, 3, 1],
+        [5, 3, 4],
+        [4, 3, 2],
+        [7, 5, 6],
+        [8, 5, 4],
+        [9, 4, 6],
+        [10, 7, 9],
+        [11, 6, 8],
+        [11, 7, 5],
+        [11, 9, 8],
+        [12, 11, 6],
+        [13, 11, 8],
+        [7, 3, 2],
     ]
     unsolvable_cases = [
-        [1,2,3], # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6,4,3], # even both jars and goal odd >> should be covered as unsolvable
-        [5,3,7], # even both odd and goal even >> not divisible by gcd
+        [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+        [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
+        [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
     ]
     for case in solvable_cases:
         print(case)
