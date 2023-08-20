@@ -1,3 +1,4 @@
+from math import gcd
 from operator import itemgetter
 
 from core.utils.enums import Status
@@ -60,8 +61,10 @@ class Juggler:
             solution = self._was_solved(jar_x, jar_y, goal)
             if solution:
                 self.ok_solution_response(solution)
-            self._is_solvable()
-        except UnsolvableException:
+                #TODO: yeah, this must be refact
+            self._is_solvable(jar_x, jar_y, goal)
+        except UnsolvableException as e:
+            print(e)
             self.no_solution_response()
 
         self.jar_x = Jug(jar_x, "Jar-X")
@@ -156,8 +159,23 @@ class Juggler:
         solution = min([x_to_y, y_to_x], key=itemgetter('steps'))
         return solution
 
-    def _is_solvable(self):
-        True
+    def _is_solvable(self, jar_x, jar_y, goal):
+        if self._is_not_goal_div_by_jars_gcd(jar_x, jar_y, goal):
+            raise UnsolvableException('Goal is not divisible by the GCD of both jars.')
+        if self._is_goal_sum_of_both_jars(jar_x, jar_y, goal):
+            raise UnsolvableException('Goal is the sum of both jars, only can be achieved separately')
+        if self._is_goal_gt_bigger_jar(jar_x, jar_y, goal):
+            raise UnsolvableException(f"Goal is bigger than the bigger jar. No space to hold {goal} gallons.")
+
+    def _is_not_goal_div_by_jars_gcd(self,jar_x, jar_y, goal):
+        """Only is solvable if goal can be divided by the GCD of both jars capacity."""
+        return goal % gcd(jar_x, jar_y) != 0
+
+    def _is_goal_sum_of_both_jars(self,jar_x, jar_y, goal):
+        return jar_x + jar_y == goal
+
+    def _is_goal_gt_bigger_jar(self,jar_x, jar_y, goal):
+        return goal > max(jar_x, jar_y)
 
     def _was_solved(self, jar_x, jar_y, goal):
         """NOT IMPLEMENTED
