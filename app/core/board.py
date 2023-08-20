@@ -1,4 +1,7 @@
+from operator import itemgetter
+
 from core.utils.enums import Status
+from core.utils.exceptions import UnsolvableException
 
 
 class BaseJug:
@@ -52,10 +55,26 @@ class Jug(BaseJug):
 
 class Juggler:
     def __init__(self, jar_x, jar_y, goal):
-        self._was_solved(jar_x, jar_y, goal)
+        # TODO: move this out of juggler (don't call if there is a result or a no result)
+        try:
+            solution = self._was_solved(jar_x, jar_y, goal)
+            if solution:
+                self.ok_solution_response(solution)
+            self._is_solvable()
+        except UnsolvableException:
+            self.no_solution_response()
+
         self.jar_x = Jug(jar_x, "Jar-X")
         self.jar_y = Jug(jar_y, "Jar-Y")
         self.goal = goal
+
+    def no_solution_response(self):
+        # TODO: move to some communicator class
+        return "No Solution"
+
+    def ok_solution_response(self, solution):
+        # TODO: move to some communicator class
+        return solution
 
     def fill(self, jar):
         """Fills jar"""
@@ -74,51 +93,61 @@ class Juggler:
         destination._update_content(transferred_water)
 
     def _solver_xy(self):
+        # TODO: move to solver (divide the movements from the proper algorithm)
         """Always move from x to y"""
         step = 0
+        process = list()
 
         while self.goal not in (self.jar_x.content, self.jar_y.content):
             if self.jar_x.content == 0:
                 self.fill(self.jar_x)
                 step += 1
-                print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
                 continue
 
             if self.jar_y.content == self.jar_y.capacity:
                 self.empty(self.jar_y)
                 step += 1
-                print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
                 continue
 
             self.transfer(self.jar_x, self.jar_y)
             step += 1
-
-            print(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
-
+            process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+        return dict(steps=step, process=process)
 
     def _solver_yx(self):
+        # TODO: move to solver (divide the movements from the proper algorithm)
         """Always move from y to x"""
         step = 0
+        process = list()
 
         while self.goal not in (self.jar_x.content, self.jar_y.content):
             if self.jar_y.content == 0:
                 self.fill(self.jar_y)
                 step += 1
-                print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
                 continue
 
             if self.jar_x.content == self.jar_x.capacity:
                 self.empty(self.jar_x)
                 step += 1
-                print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+                process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
                 continue
 
             self.transfer(self.jar_y, self.jar_x)
             step += 1
+            process.append(f'Step {step} : {self.jar_x.content} - {self.jar_y.content}')
+        return dict(steps=step, process=process)
 
-            print(f'Step {step} : {self.jar_y.content} - {self.jar_x.content}')
+    def solve(self):
+        x_to_y = self._solver_xy()
+        y_to_x = self._solver_yx()
+        solution = min([x_to_y, y_to_x], key=itemgetter('steps'))
+        return self.ok_solution_response(solution)
 
     def _is_solvable(self):
+        True
 
     def _was_solved(self, jar_x, jar_y, goal):
         """NOT IMPLEMENTED
@@ -135,19 +164,18 @@ class Juggler:
          or jars = ?(jar_y, jar_x)
          """
         if solved_before and not solved_before['process']:
-            raise Unsolvable()
+            raise UnsolvableException()
         return solved_before
-
-
-
-
 
 
 if __name__ == "__main__":
     j = Juggler(5, 3, 4)
-    j.solver_xy()
+    j._solver_xy()
     jj = Juggler(5, 3, 4)
-    jj.solver_yx()
+    jj._solver_yx()
+    print('s')
+    s = Juggler(5, 3, 4)
+    print(s.solve())
     # print(j.jar_x, j.jar_y)
     # j.fill(j.jar_x)  # llenas 5
     # print(j.jar_x, j.jar_y)
