@@ -32,4 +32,3 @@ test-cov80:
 
 cli:
 	python app/cli.py
-
