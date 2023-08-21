@@ -231,59 +231,40 @@ class Juggler:
 
     def _get_next_statuses(self, origin_status, checked):
         next_statuses = list()
+        curr_x, curr_y = origin_status
         # fill
-        if origin_status[0] is 0:
-            next_statuses.append((origin_status[0], self.jar_y.capacity))
-        if origin_status[1] is 0:
-            next_statuses.append((self.jar_x.capacity, origin_status[1]))
+        if curr_x != self.jar_x.capacity:
+            next_statuses.append((self.jar_x.capacity, curr_y))
+        if curr_y != self.jar_y.capacity:
+            next_statuses.append((curr_x, self.jar_y.capacity))
         # empty
-        if origin_status[0] is not 0:
-            potential_status = (0, origin_status[1])
-            next_statuses.append(potential_status)
-        if origin_status[1] is not 0:
-            potential_status = (origin_status[0], 0)
-            next_statuses.append(potential_status)
+        if curr_x != 0:
+            next_statuses.append((0, curr_y))
+        if curr_y != 0:
+            next_statuses.append((curr_x, 0))
         # transfer
         # x to y
-        if origin_status[0] is not 0 and origin_status[1] is not self.jar_y.capacity:
-            amount_to_transfer = min(origin_status[0], self.jar_y.capacity - origin_status[1])
-            potential_status = (self.jar_x.capacity - amount_to_transfer, self.jar_y.capacity + amount_to_transfer)
-            if potential_status not in checked:
-                next_statuses.append(potential_status)
+        if curr_x != 0 and curr_y != self.jar_y.capacity:
+            amount_to_transfer = min(
+                curr_x,
+                self.jar_y.capacity - curr_y
+            )
+            next_statuses.append((
+                curr_x - amount_to_transfer,
+                curr_y + amount_to_transfer
+            ))
         # y to x
-        if origin_status[0] is not self.jar_y.capacity and self.jar_y.status is not Status.EMPTY:
-            amount_to_transfer = min(self.jar_x.capacity - origin_status[0], self.jar_y.capacity)
-            potential_status = (self.jar_x.capacity + amount_to_transfer, self.jar_y.capacity - amount_to_transfer)
-            if potential_status not in checked:
-                next_statuses.append(potential_status)
+        if curr_x != self.jar_x.capacity and curr_y != 0:
+            amount_to_transfer = min(
+                self.jar_x.capacity - curr_x,
+                curr_y
+            )
+            next_statuses.append((
+                curr_x + amount_to_transfer,
+                curr_y - amount_to_transfer
+            ))
 
-        # # fill
-        # # cont x < cap x, (cont_x cap_Y)
-        # if self.jar_x.content < self.jar_x.capacity:
-        #     next_statuses.append((self.jar_x.content, self.jar_y.capacity))
-        # # cont y < cap y, (cap_x, cont_y)
-        # if self.jar_y.content < self.jar_y.capacity:
-        #     next_statuses.append((self.jar_x.capacity, self.jar_y.content))
-        # # empty
-        # # (0, cont_y) wasnt checked, add it
-        # if (0, self.jar_y.content) not in checked:
-        #     next_statuses.append((0, self.jar_y.content))
-        # # (cont x, 0) wasnt checked, add it
-        # if (self.jar_x.content, 0) not in checked:
-        #     next_statuses.append((self.jar_x.content, 0))
-        # # transfer
-        # # min(capX - contX, capY) de y a x. if not checked, add (x + min, Y - min)
-        # amount_to_transfer = min(self.jar_x.capacity - self.jar_x.content, self.jar_y.capacity)
-        # potential_status = (self.jar_x.capacity + amount_to_transfer, self.jar_y.capacity - amount_to_transfer)
-        # if potential_status not in checked:
-        #     next_statuses.append(potential_status)
-        # # min(contX, capY - contY) de x a y. if not checked, add (x - min, Y + min)
-        # amount_to_transfer = min(self.jar_x.content, self.jar_y.capacity - self.jar_y.content)
-        # potential_status = (self.jar_x.capacity - amount_to_transfer, self.jar_y.capacity + amount_to_transfer)
-        # if potential_status not in checked:
-        #     next_statuses.append(potential_status)
-
-        return [status for status in next_statuses if status not in checked]
+        return set(status for status in next_statuses if status not in checked)
 
     def goal_achieved(self, checking_status):
         return self.goal in checking_status
