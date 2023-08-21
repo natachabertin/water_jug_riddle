@@ -206,11 +206,13 @@ class Juggler:
             raise UnsolvableException()
         return solved_before
 
-    def solve(self):
+    def solve_queue(self):
         statuses_to_check = deque()
         checked_statuses = list((self._current_status(),))
 
-        statuses_to_check.extend(self._get_next_statuses(self._current_status(), checked_statuses))
+        statuses_to_check.extend(
+            self._get_next_statuses(self._current_status(), checked_statuses)
+        )
 
         while statuses_to_check:
             checking_status = statuses_to_check.popleft()
@@ -221,12 +223,9 @@ class Juggler:
                 # self.ok_solution_response(f"solution in {len(checked_statuses)}")
                 break
             else:
-                statuses_to_check.extend(self._get_next_statuses(checking_status, checked_statuses))
-
-            # print(f'queue: {statuses_to_check}')
-            # print(f'checked: {checked_statuses}')
-
-
+                statuses_to_check.extend(
+                    self._get_next_statuses(checking_status, checked_statuses)
+                )
 
     def _current_status(self):
         return self.jar_x.content, self.jar_y.content
@@ -247,24 +246,16 @@ class Juggler:
         # transfer
         # x to y
         if curr_x != 0 and curr_y != self.jar_y.capacity:
-            amount_to_transfer = min(
-                curr_x,
-                self.jar_y.capacity - curr_y
+            amount_to_transfer = min(curr_x, self.jar_y.capacity - curr_y)
+            next_statuses.append(
+                (curr_x - amount_to_transfer, curr_y + amount_to_transfer)
             )
-            next_statuses.append((
-                curr_x - amount_to_transfer,
-                curr_y + amount_to_transfer
-            ))
         # y to x
         if curr_x != self.jar_x.capacity and curr_y != 0:
-            amount_to_transfer = min(
-                self.jar_x.capacity - curr_x,
-                curr_y
+            amount_to_transfer = min(self.jar_x.capacity - curr_x, curr_y)
+            next_statuses.append(
+                (curr_x + amount_to_transfer, curr_y - amount_to_transfer)
             )
-            next_statuses.append((
-                curr_x + amount_to_transfer,
-                curr_y - amount_to_transfer
-            ))
 
         return set(status for status in next_statuses if status not in checked)
 
@@ -273,67 +264,67 @@ class Juggler:
 
 
 if __name__ == "__main__":
-    # s = Juggler(5, 3, 4)
-    # print('s',s.solve())
+    s = Juggler(5, 3, 4)
+    s.solve_queue()
     # q = Juggler(5, 3, 1)
     # print('q',q.solve())
-    solvable_cases = [
-        [5, 3, 4],
-        [5, 3, 2],
-        [5, 4, 2],
-        [5, 3, 1],
-        [5, 3, 4],
-        [4, 3, 2],
-        [7, 5, 6],
-        [8, 5, 4],
-        [9, 4, 6],
-        [10, 7, 9],
-        [11, 6, 8],
-        [11, 7, 5],
-        [11, 9, 8],
-        [12, 11, 6],
-        [13, 11, 8],
-        [7, 3, 2],
-    ]
-    unsolvable_cases = [
-        [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
-        [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
-    ]
-    big_num_cases_unsolvable = [
-        [1000000000, 2, 3000000000],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6, 4, 3000000000],  # even both jars and goal odd >> should be covered as unsolvable
-        [10000000000,10000000000,10000000],  # Goal is not divisible
-        [123456789,12345678,1245],  # Goal is not divisible
-    ]
-    big_num_cases = [
-        [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
-        [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
-        [159,452,5],
-        [1111112,2,45]
-    ]
-    for case in solvable_cases:
-        print(case)
-        print(Juggler(*case).solve())
-
-    for case in unsolvable_cases:
-        print('unsolvable', case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
-
-    for case in big_num_cases_unsolvable:
-        print('big unsolvable', case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
-
-    for case in big_num_cases:
-        print('big', case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
-
+    # solvable_cases = [
+    #     [5, 3, 4],
+    #     [5, 3, 2],
+    #     [5, 4, 2],
+    #     [5, 3, 1],
+    #     [5, 3, 4],
+    #     [4, 3, 2],
+    #     [7, 5, 6],
+    #     [8, 5, 4],
+    #     [9, 4, 6],
+    #     [10, 7, 9],
+    #     [11, 6, 8],
+    #     [11, 7, 5],
+    #     [11, 9, 8],
+    #     [12, 11, 6],
+    #     [13, 11, 8],
+    #     [7, 3, 2],
+    # ]
+    # unsolvable_cases = [
+    #     [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+    #     [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
+    #     [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
+    # ]
+    # big_num_cases_unsolvable = [
+    #     [1000000000, 2, 3000000000],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+    #     [6, 4, 3000000000],  # even both jars and goal odd >> should be covered as unsolvable
+    #     [10000000000,10000000000,10000000],  # Goal is not divisible
+    #     [123456789,12345678,1245],  # Goal is not divisible
+    # ]
+    # big_num_cases = [
+    #     [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
+    #     [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
+    #     [159,452,5],
+    #     [1111112,2,45]
+    # ]
+    # for case in solvable_cases:
+    #     print(case)
+    #     print(Juggler(*case).solve())
+    #
+    # for case in unsolvable_cases:
+    #     print('unsolvable', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+    #
+    # for case in big_num_cases_unsolvable:
+    #     print('big unsolvable', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+    #
+    # for case in big_num_cases:
+    #     print('big', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+    #
