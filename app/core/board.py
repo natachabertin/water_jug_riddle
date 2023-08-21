@@ -232,27 +232,27 @@ class Juggler:
     def _get_next_statuses(self, origin_status, checked):
         next_statuses = list()
         # fill
-        if self.jar_x.status is Status.EMPTY:
-            next_statuses.append((self.jar_x.content, self.jar_y.capacity))
-        if self.jar_y.status is Status.EMPTY:
-            next_statuses.append((self.jar_x.capacity, self.jar_y.content))
+        if origin_status[0] is 0:
+            next_statuses.append((origin_status[0], self.jar_y.capacity))
+        if origin_status[1] is 0:
+            next_statuses.append((self.jar_x.capacity, origin_status[1]))
         # empty
-        if self.jar_x.status is not Status.EMPTY:
-            potential_status = (0, self.jar_y.content)
+        if origin_status[0] is not 0:
+            potential_status = (0, origin_status[1])
             next_statuses.append(potential_status)
-        if self.jar_y.status is not Status.EMPTY:
-            potential_status = (self.jar_x.content, 0)
+        if origin_status[1] is not 0:
+            potential_status = (origin_status[0], 0)
             next_statuses.append(potential_status)
         # transfer
         # x to y
-        if self.jar_x.status is not Status.EMPTY and self.jar_y.status is not Status.FULL:
-            amount_to_transfer = min(self.jar_x.content, self.jar_y.capacity - self.jar_y.content)
+        if origin_status[0] is not 0 and origin_status[1] is not self.jar_y.capacity:
+            amount_to_transfer = min(origin_status[0], self.jar_y.capacity - origin_status[1])
             potential_status = (self.jar_x.capacity - amount_to_transfer, self.jar_y.capacity + amount_to_transfer)
             if potential_status not in checked:
                 next_statuses.append(potential_status)
         # y to x
-        if self.jar_x.status is not Status.FULL and self.jar_y.status is not Status.EMPTY:
-            amount_to_transfer = min(self.jar_x.capacity - self.jar_x.content, self.jar_y.capacity)
+        if origin_status[0] is not self.jar_y.capacity and self.jar_y.status is not Status.EMPTY:
+            amount_to_transfer = min(self.jar_x.capacity - origin_status[0], self.jar_y.capacity)
             potential_status = (self.jar_x.capacity + amount_to_transfer, self.jar_y.capacity - amount_to_transfer)
             if potential_status not in checked:
                 next_statuses.append(potential_status)
