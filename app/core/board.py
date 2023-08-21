@@ -1,3 +1,4 @@
+from collections import deque
 from math import gcd
 from operator import itemgetter
 
@@ -158,9 +159,9 @@ class Juggler:
             process.append(f"Step {step} : {self.jar_x.content} - {self.jar_y.content}")
         return dict(steps=step, process=process)
 
-    def solve(self):
+    def solve_brute_force(self):
         x_to_y = self._solver_xy()
-        self._reset_jars()
+        self._reset_jars()  # a proper refactor should be create the jar here each time instead.
         y_to_x = self._solver_yx()
         solution = min([x_to_y, y_to_x], key=itemgetter("steps"))
         return solution
@@ -205,34 +206,150 @@ class Juggler:
             raise UnsolvableException()
         return solved_before
 
+    def solve(self):
+        statuses_to_check = deque()
+        checked_statuses = list((self._current_status(),))
+
+        statuses_to_check.extend(self._get_next_statuses(self._current_status(), checked_statuses))
+
+        while statuses_to_check:
+            checking_status = statuses_to_check.popleft()
+            checked_statuses.append(checking_status)
+            if self.goal_achieved(checking_status):
+                print('achieved')
+                self.ok_solution_response(f"solution in {len(checked_statuses)}")
+            else:
+                statuses_to_check.extend(self._get_next_statuses(checking_status, checked_statuses))
+
+            print(f'queue: {statuses_to_check}')
+            print(f'checked: {checked_statuses}')
+        raise UnsolvableException('Reached end with no solution.')
+
+
+    def _current_status(self):
+        return self.jar_x.content, self.jar_y.content
+
+    def _get_next_statuses(self, origin_status, checked):
+        next_statuses = list()
+        # fill
+        if self.jar_x.status is Status.EMPTY:
+            next_statuses.append((self.jar_x.content, self.jar_y.capacity))
+        if self.jar_y.status is Status.EMPTY:
+            next_statuses.append((self.jar_x.capacity, self.jar_y.content))
+        # empty
+        if self.jar_x.status is not Status.EMPTY:
+            potential_status = (0, self.jar_y.content)
+            next_statuses.append(potential_status)
+        if self.jar_y.status is not Status.EMPTY:
+            potential_status = (self.jar_x.content, 0)
+            next_statuses.append(potential_status)
+        # transfer
+        # x to y
+        if self.jar_x.status is not Status.EMPTY and self.jar_y.status is not Status.FULL:
+            amount_to_transfer = min(self.jar_x.content, self.jar_y.capacity - self.jar_y.content)
+            potential_status = (self.jar_x.capacity - amount_to_transfer, self.jar_y.capacity + amount_to_transfer)
+            if potential_status not in checked:
+                next_statuses.append(potential_status)
+        # y to x
+        if self.jar_x.status is not Status.FULL and self.jar_y.status is not Status.EMPTY:
+            amount_to_transfer = min(self.jar_x.capacity - self.jar_x.content, self.jar_y.capacity)
+            potential_status = (self.jar_x.capacity + amount_to_transfer, self.jar_y.capacity - amount_to_transfer)
+            if potential_status not in checked:
+                next_statuses.append(potential_status)
+
+        # # fill
+        # # cont x < cap x, (cont_x cap_Y)
+        # if self.jar_x.content < self.jar_x.capacity:
+        #     next_statuses.append((self.jar_x.content, self.jar_y.capacity))
+        # # cont y < cap y, (cap_x, cont_y)
+        # if self.jar_y.content < self.jar_y.capacity:
+        #     next_statuses.append((self.jar_x.capacity, self.jar_y.content))
+        # # empty
+        # # (0, cont_y) wasnt checked, add it
+        # if (0, self.jar_y.content) not in checked:
+        #     next_statuses.append((0, self.jar_y.content))
+        # # (cont x, 0) wasnt checked, add it
+        # if (self.jar_x.content, 0) not in checked:
+        #     next_statuses.append((self.jar_x.content, 0))
+        # # transfer
+        # # min(capX - contX, capY) de y a x. if not checked, add (x + min, Y - min)
+        # amount_to_transfer = min(self.jar_x.capacity - self.jar_x.content, self.jar_y.capacity)
+        # potential_status = (self.jar_x.capacity + amount_to_transfer, self.jar_y.capacity - amount_to_transfer)
+        # if potential_status not in checked:
+        #     next_statuses.append(potential_status)
+        # # min(contX, capY - contY) de x a y. if not checked, add (x - min, Y + min)
+        # amount_to_transfer = min(self.jar_x.content, self.jar_y.capacity - self.jar_y.content)
+        # potential_status = (self.jar_x.capacity - amount_to_transfer, self.jar_y.capacity + amount_to_transfer)
+        # if potential_status not in checked:
+        #     next_statuses.append(potential_status)
+
+        return [status for status in next_statuses if status not in checked]
+
+    def goal_achieved(self, checking_status):
+        return self.goal in checking_status
+
 
 if __name__ == "__main__":
-    # s = Juggler(5, 3, 4)
-    # print('s',s.solve())
+    s = Juggler(5, 3, 4)
+    print('s',s.solve())
     # q = Juggler(5, 3, 1)
     # print('q',q.solve())
-    solvable_cases = [
-        [5, 3, 2],
-        [5, 4, 2],
-        [5, 3, 1],
-        [5, 3, 4],
-        [4, 3, 2],
-        [7, 5, 6],
-        [8, 5, 4],
-        [9, 4, 6],
-        [10, 7, 9],
-        [11, 6, 8],
-        [11, 7, 5],
-        [11, 9, 8],
-        [12, 11, 6],
-        [13, 11, 8],
-        [7, 3, 2],
-    ]
-    unsolvable_cases = [
-        [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
-        [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
-    ]
-    for case in solvable_cases:
-        print(case)
-        print(Juggler(*case).solve())
+    # solvable_cases = [
+    #     [5, 3, 2],
+    #     [5, 4, 2],
+    #     [5, 3, 1],
+    #     [5, 3, 4],
+    #     [4, 3, 2],
+    #     [7, 5, 6],
+    #     [8, 5, 4],
+    #     [9, 4, 6],
+    #     [10, 7, 9],
+    #     [11, 6, 8],
+    #     [11, 7, 5],
+    #     [11, 9, 8],
+    #     [12, 11, 6],
+    #     [13, 11, 8],
+    #     [7, 3, 2],
+    # ]
+    # unsolvable_cases = [
+    #     [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+    #     [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
+    #     [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
+    # ]
+    # big_num_cases_unsolvable = [
+    #     [1000000000, 2, 3000000000],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+    #     [6, 4, 3000000000],  # even both jars and goal odd >> should be covered as unsolvable
+    #     [10000000000,10000000000,10000000],  # Goal is not divisible
+    #     [123456789,12345678,1245],  # Goal is not divisible
+    # ]
+    # big_num_cases = [
+    #     [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
+    #     [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
+    #     [159,452,5],
+    #     [1111112,2,45]
+    # ]
+    # for case in solvable_cases:
+    #     print(case)
+    #     print(Juggler(*case).solve())
+    #
+    # for case in unsolvable_cases:
+    #     print('unsolvable', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+    #
+    # for case in big_num_cases_unsolvable:
+    #     print('big unsolvable', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+    #
+    # for case in big_num_cases:
+    #     print('big', case)
+    #     try:
+    #         print(Juggler(*case).solve())
+    #     except UnsolvableException as e:
+    #         print(e.message)
+
