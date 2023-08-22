@@ -231,14 +231,16 @@ class Juggler:
                 )
 
     def solve(self):
-        #TODO: try orderdict instead of deque + graph
+        # TODO: try orderdict instead of deque + graph
         statuses_to_check = deque()
         current_status = self._current_status()
         checked_statuses = list((current_status,))
 
         graph = {current_status: None}
 
-        next_statuses = self._get_next_statuses(self._current_status(), checked_statuses)
+        next_statuses = self._get_next_statuses(
+            self._current_status(), checked_statuses
+        )
 
         graph.update({current_status: next_statuses})
 
@@ -253,7 +255,9 @@ class Juggler:
                 print(path)
                 break
             else:
-                next_statuses = self._get_next_statuses(checking_status, checked_statuses)
+                next_statuses = self._get_next_statuses(
+                    checking_status, checked_statuses
+                )
                 graph.update({checking_status: next_statuses})
                 statuses_to_check.extend(next_statuses)
 
@@ -265,7 +269,7 @@ class Juggler:
                 path.append(node)
                 parent = list(graph.keys())[list(graph.values()).index([node])]
 
-            if node == (0,0):
+            if node == (0, 0):
                 return path
 
             if parent == node:
@@ -274,14 +278,6 @@ class Juggler:
                     parent = list(graph.keys())[list(graph.values()).index([parent])]
                 except ValueError as e:
                     parent = [k for k, v in graph.items() if parent in v][0]
-
-
-
-        path.append(graph[checking_status])
-
-
-        return path
-
 
     def move_water_operations(self, origin_status):
         curr_x, curr_y = origin_status
@@ -352,44 +348,51 @@ if __name__ == "__main__":
         [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
         [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
         [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
-        [0,0,0],# all 0 >> you need a goal, not steps
-        [10,1,0], # goal 0, jugs not
-        [0,0,1], # jugs 0, goal not
+        [0, 0, 0],  # all 0 >> you need a goal, not steps
+        [10, 1, 0],  # goal 0, jugs not
+        [0, 0, 1],  # jugs 0, goal not
     ]
     big_num_cases_unsolvable = [
-        [1000000000, 2, 3000000000],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6, 4, 3000000000],  # even both jars and goal odd >> should be covered as unsolvable
-        [10000000000,10000000000,10000000],  # Goal is not divisible
-        [123456789,12345678,1245],  # Goal is not divisible
+        [
+            1000000000,
+            2,
+            3000000000,
+        ],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+        [
+            6,
+            4,
+            3000000000,
+        ],  # even both jars and goal odd >> should be covered as unsolvable
+        [10000000000, 10000000000, 10000000],  # Goal is not divisible
+        [123456789, 12345678, 1245],  # Goal is not divisible
     ]
     big_num_cases = [
         [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
         [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
-        [159,452,5],
-        [1111112,2,45]
+        [159, 452, 5],
+        [1111112, 2, 45],
     ]
     for case in solvable_cases:
         print(case)
         print(Juggler(*case).solve())
 
     for case in unsolvable_cases:
-        print('unsolvable', case)
+        print("unsolvable", case)
         try:
             print(Juggler(*case).solve())
         except UnsolvableException as e:
             print(e.message)
 
     for case in big_num_cases_unsolvable:
-        print('big unsolvable', case)
+        print("big unsolvable", case)
         try:
             print(Juggler(*case).solve())
         except UnsolvableException as e:
             print(e.message)
 
     for case in big_num_cases:
-        print('big', case)
+        print("big", case)
         try:
             print(Juggler(*case).solve())
         except UnsolvableException as e:
             print(e.message)
-
