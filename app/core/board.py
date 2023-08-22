@@ -227,12 +227,62 @@ class Juggler:
                     self._get_next_statuses(checking_status, checked_statuses)
                 )
 
-    def _current_status(self):
-        return self.jar_x.content, self.jar_y.content
+    def solve(self):
+        #TODO: try orderdict instead of deque + graph
+        statuses_to_check = deque()
+        current_status = self._current_status()
+        checked_statuses = list((current_status,))
 
-    def _get_next_statuses(self, origin_status, checked):
-        next_statuses = list()
+        graph = {current_status: None}
+
+        next_statuses = self._get_next_statuses(self._current_status(), checked_statuses)
+
+        graph.update({current_status: next_statuses})
+
+        statuses_to_check.extend(next_statuses)
+
+        while statuses_to_check:
+            checking_status = statuses_to_check.popleft()
+            checked_statuses.append(checking_status)
+            if self.goal_achieved(checking_status):
+                path = self.retrieve_path(graph, checking_status, checked_statuses)
+                print(f"solution in {len(path)}")
+                print(path)
+                break
+            else:
+                next_statuses = self._get_next_statuses(checking_status, checked_statuses)
+                graph.update({checking_status: next_statuses})
+                statuses_to_check.extend(next_statuses)
+
+    def retrieve_path(self, graph, checking_status, checked_statuses):
+        path = list()
+
+        for node in reversed(checked_statuses):
+            if checking_status == node:
+                path.append(node)
+                parent = list(graph.keys())[list(graph.values()).index([node])]
+
+            if node == (0,0):
+                return path
+
+            if parent == node:
+                path.append(parent)
+                try:
+                    parent = list(graph.keys())[list(graph.values()).index([parent])]
+                except ValueError as e:
+                    parent = [k for k, v in graph.items() if parent in v][0]
+
+
+
+        path.append(graph[checking_status])
+
+
+        return path
+
+
+    def move_water_operations(self, origin_status):
         curr_x, curr_y = origin_status
+        next_statuses = list()
         # fill
         if curr_x != self.jar_x.capacity:
             next_statuses.append((self.jar_x.capacity, curr_y))
@@ -256,8 +306,15 @@ class Juggler:
             next_statuses.append(
                 (curr_x + amount_to_transfer, curr_y - amount_to_transfer)
             )
+        return next_statuses
 
-        return set(status for status in next_statuses if status not in checked)
+    def _current_status(self):
+        return self.jar_x.content, self.jar_y.content
+
+    def _get_next_statuses(self, origin_status, checked):
+        next_statuses = self.move_water_operations(origin_status)
+
+        return [status for status in next_statuses if status not in checked]
 
     def goal_achieved(self, checking_status):
         return self.goal in checking_status
@@ -265,7 +322,7 @@ class Juggler:
 
 if __name__ == "__main__":
     s = Juggler(5, 3, 4)
-    s.solve_queue()
+    s.solve()
     # q = Juggler(5, 3, 1)
     # print('q',q.solve())
     # solvable_cases = [
