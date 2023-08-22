@@ -32,3 +32,6 @@ test-cov80:
 
 cli:
 	python app/cli.py
+
+precommit:
+	pre-commit run --all-files --show-diff-on-failure
