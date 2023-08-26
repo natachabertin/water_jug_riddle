@@ -1,8 +1,8 @@
 from math import gcd
 
 from core.board import Juggler
-from core.models.communicator import NokResult
-from core.models.communicator import OkResult
+from core.utils.models import NokResult
+from core.utils.models import OkResult
 from core.utils.exceptions import UnsolvableException
 
 
@@ -13,7 +13,14 @@ class Checker:
     """Interacts between core and with API/CLI as the orchestration logic.
     Receives params as integers; and the "solver" class
     (uncoupling the algorithm from the orchestration logic).
-    Returns results object.
+
+    Checks if those params were historically solved
+    (if so, returns from db instead of calculating
+    -historic data includes unsolvable puzzles).
+
+    If not solved yet, calls the selected algorithm to solve it.
+
+    Returns results object, modeled depending on solvable.
     """
 
     def __init__(self, jar_x, jar_y, goal, solver):
