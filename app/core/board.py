@@ -6,8 +6,9 @@ from core.utils.enums import Status
 from core.utils.exceptions import UnsolvableException
 
 
-class BaseJug:
-    def __init__(self, capacity):
+class Jug:
+    def __init__(self, capacity,name):
+        self.name = name
         self.capacity = capacity
         self.content = 0
         self.space = capacity
@@ -47,12 +48,6 @@ class BaseJug:
     def empty(self):
         """Sets all capacity to space (empty jar)"""
         self._update_content(-self.content)
-
-
-class Jug(BaseJug):
-    def __init__(self, capacity, name):
-        self.name = name
-        super().__init__(capacity)
 
 
 class Juggler:
