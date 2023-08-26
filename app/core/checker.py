@@ -10,7 +10,13 @@ HISTORIC_RESULTS = dict()
 
 
 class Checker:
-    def __init__(self, jar_x, jar_y, goal):
+    """Interacts between core and with API/CLI as the orchestration logic.
+    Receives params as integers; and the "solver" class
+    (uncoupling the algorithm from the orchestration logic).
+    Returns results object.
+    """
+
+    def __init__(self, jar_x, jar_y, goal, solver):
         self.params = (
             jar_x,
             jar_y,
@@ -18,14 +24,14 @@ class Checker:
         )
         self._solution = None
         self.result = None
-        self._process()
+        self._process(solver)
 
-    def _process(self):
+    def _process(self, solver):
         self.result = self._was_solved()
         if self.result:
             self.report()
         if self._is_solvable():
-            self._solution = Juggler(*self.params).solve()
+            self._solution = solver(*self.params).solve()
             self._process_solvable()
 
     def _is_solvable(self):
@@ -79,3 +85,7 @@ class Checker:
 
     def _is_goal_gt_bigger_jar(self, jar_x, jar_y, goal):
         return goal > max(jar_x, jar_y)
+
+
+if __name__ == "__main__":
+    print(Checker(5, 4, 2, Juggler).report())
