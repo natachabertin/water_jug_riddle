@@ -7,7 +7,7 @@ from core.utils.exceptions import UnsolvableException
 
 
 class Jug:
-    def __init__(self, capacity,name):
+    def __init__(self, capacity, name):
         self.name = name
         self.capacity = capacity
         self.content = 0
