@@ -251,8 +251,7 @@ class Juggler:
             checked_statuses.append(checking_status)
             if self.goal_achieved(checking_status):
                 path = self.retrieve_path(graph, checking_status, checked_statuses)
-                print(f"solution in {len(path)}")
-                print(path)
+                return len(path), path
                 break
             else:
                 next_statuses = self._get_next_statuses(
@@ -273,6 +272,8 @@ class Juggler:
                     parent = [k for k, v in graph.items() if node in v][0]
 
             if node == (0, 0):
+                path.append(node)
+                path.reverse()
                 return path
 
             if parent == node:
