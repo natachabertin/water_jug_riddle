@@ -11,7 +11,7 @@ def welcome():
             """[bold]This is [blue]Water Jug Riddle[/blue] solver app.[/bold]
 
         You enter the amount of gallons to count, and the size of the buckets.
-        We show you the result and the process."
+        We show you the result and the process.
         """,
             title="Hello! :hand:",
             subtitle="Let's play!",
@@ -43,7 +43,7 @@ def request_params():
 
 
 def mock_process():
-    """ implement jsonified status as data for the output and prettify it in cli with rich"""
+    """implement jsonified status as data for the output and prettify it in cli with rich"""
     j = Juggler(5, 3, 4)
     print(j.jar_x, j.jar_y)
     j.fill(j.jar_x)  # llenas 5
@@ -72,8 +72,8 @@ def main():
     try:
         board = Juggler(x, y, z)
         # board.solve()  # There should be another entity ('solver') that aplies the algorithm and return the list of statuses
-        show_solution()
         # this is the mock replacing the printing until solver returns the status list
+        show_solution()
         process = mock_process()
     except NoSolutionException:
         no_solution()
