@@ -5,6 +5,7 @@ from core.models.communicator import NokResult
 from core.models.communicator import OkResult
 from core.utils.exceptions import UnsolvableException
 
+
 HISTORIC_RESULTS = dict()
 
 
