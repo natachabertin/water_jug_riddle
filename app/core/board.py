@@ -267,7 +267,10 @@ class Juggler:
         for node in reversed(checked_statuses):
             if checking_status == node:
                 path.append(node)
-                parent = list(graph.keys())[list(graph.values()).index([node])]
+                try:
+                    parent = list(graph.keys())[list(graph.values()).index([node])]
+                except ValueError as e:
+                    parent = [k for k, v in graph.items() if node in v][0]
 
             if node == (0, 0):
                 return path
@@ -320,15 +323,11 @@ class Juggler:
 
 
 if __name__ == "__main__":
-    # s = Juggler(5, 3, 2)
-    # # s.solve()
     # s = Juggler(0, 0, 4)
-    # # s.solve()
-    # q = Juggler(5, 3, 1)
-    # q.solve()
+    # s.solve()
     solvable_cases = [
         [5, 3, 4],
-        # [5, 3, 2],
+        [5, 3, 2],
         [5, 4, 2],
         [5, 3, 1],
         [5, 3, 4],
@@ -351,6 +350,7 @@ if __name__ == "__main__":
         [0, 0, 0],  # all 0 >> you need a goal, not steps
         [10, 1, 0],  # goal 0, jugs not
         [0, 0, 1],  # jugs 0, goal not
+        [0, 0, 4],  # jugs 0, goal not
     ]
     big_num_cases_unsolvable = [
         [
@@ -369,6 +369,8 @@ if __name__ == "__main__":
     big_num_cases = [
         [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
         [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
+        [50, 3000000000000000000000000, 700],  # filling 50 by 50 up to 700, takes a lot
+        [700, 3000000000000000000000000, 50],  # filling 50 by 50 up to 700, takes a lot
         [159, 452, 5],
         [1111112, 2, 45],
     ]
