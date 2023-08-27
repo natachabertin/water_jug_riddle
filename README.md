@@ -19,10 +19,24 @@ Many of these actions can be achieved using the commands in `Makefile`:
     ```
 4. In [OpenAPI docs, in your local](http://localhost:8000/docs) you'll see OpenAPI docs from the app.
 
-##### Resume
+##### Use the web app
 1. Execute `docker-compose up`.
-2. You'll see app docs in [http://localhost:8000/docs](http://localhost:8000/docs).
+2. You'll see all the API options in the app docs in [http://localhost:8000/docs](http://localhost:8000/docs).
 
+##### Use the CLI:
+1. Run docker
+    ```bash
+    docker-compose up -d --build
+    ```
+2. Enter docker bash
+    ```bash
+    docker exec -it fastapi-app bash
+    ```
+3. Run the cli interface
+    ```bash
+    python app/cli.py
+    ```
+4. Follow the instructions you see in the screen.
 
 #### Testing and debugging backend locally (without Docker)
 ##### Setup
