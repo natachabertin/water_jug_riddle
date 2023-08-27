@@ -15,8 +15,8 @@ def test_riddle_ok():
     response = client.get("/riddle/?x=5&y=3&z=4")
     assert response.status_code == 200
     assert response.json() == {
-        "path": [[0, 0], [5, 0], [2, 3], [2, 0], [0, 2], [5, 2], [4, 3]],
-        "steps": 7,
+        "path": [[5, 0], [2, 3], [2, 0], [0, 2], [5, 2], [4, 3]],
+        "steps": 6,
     }
 
 

@@ -99,7 +99,6 @@ class Juggler:
                     parent = [k for k, v in graph.items() if node in v][0]
 
             if node == (0, 0):
-                path.append(node)
                 path.reverse()
                 return path
 
@@ -148,81 +147,3 @@ class Juggler:
 
     def goal_achieved(self, checking_status):
         return self.goal in checking_status
-
-
-if __name__ == "__main__":
-    # s = Juggler(0, 0, 4)
-    # s.solve()
-    solvable_cases = [
-        [5, 3, 4],
-        [5, 3, 2],
-        [5, 4, 2],
-        [5, 3, 1],
-        [5, 3, 4],
-        [4, 3, 2],
-        [7, 5, 6],
-        [8, 5, 4],
-        [9, 4, 6],
-        [10, 7, 9],
-        [11, 6, 8],
-        [11, 7, 5],
-        [11, 9, 8],
-        [12, 11, 6],
-        [13, 11, 8],
-        [7, 3, 2],
-    ]
-    unsolvable_cases = [
-        [1, 2, 3],  # goal eq sum of jars >> uns one jar but by the sum of two
-        [6, 4, 3],  # even both jars and goal odd >> covered as unsolvable
-        [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
-        [0, 0, 0],  # all 0 >> you need a goal, not steps
-        [10, 1, 0],  # goal 0, jugs not
-        [0, 0, 1],  # jugs 0, goal not
-        [0, 0, 4],  # jugs 0, goal not
-    ]
-    big_num_cases_unsolvable = [
-        [
-            1000000000,
-            2,
-            3000000000,
-        ],  # goal eq sum of jars >> unsolv in one jar but by the sum of two
-        [
-            6,
-            4,
-            3000000000,
-        ],  # even both jars and goal odd >> should be covered as unsolvable
-        [10000000000, 10000000000, 10000000],  # Goal is not divisible
-        [123456789, 12345678, 1245],  # Goal is not divisible
-    ]
-    big_num_cases = [
-        [50, 30000000, 700],  # filling 50 by 50 up to 700
-        [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
-        [50, 3000000000000000000000000, 700],  # filling 50 by 50 up to 700
-        [700, 3000000000000000000000000, 50],  # filling 50 by 50 up to 700
-        [159, 452, 5],
-        [1111112, 2, 45],
-    ]
-    for case in solvable_cases:
-        print(case)
-        print(Juggler(*case).solve())
-
-    for case in unsolvable_cases:
-        print("unsolvable", case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
-
-    for case in big_num_cases_unsolvable:
-        print("big unsolvable", case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
-
-    for case in big_num_cases:
-        print("big", case)
-        try:
-            print(Juggler(*case).solve())
-        except UnsolvableException as e:
-            print(e.message)
