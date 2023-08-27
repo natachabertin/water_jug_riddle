@@ -3,6 +3,8 @@ from rich import print
 from rich.panel import Panel
 
 from core.board import Juggler
+from core.checker import Checker
+from core.utils.models import OkResult, NokResult
 
 
 def welcome():
@@ -14,69 +16,59 @@ def welcome():
         We show you the result and the process.
         """,
             title="Hello! :hand:",
-            subtitle="Let's play!",
+            subtitle="Let's play! :partying_face:",
         )
     )
 
 
-def no_solution():
+def show_nok(params, solution):
     print(
         Panel(
-            "There is no solution for the combination you entered.",
-            title=":boom: [bold red]Wrong![/bold red] :boom:",
+            f"{solution.reason}",
+            title=f"[bold red] Case {params}[/bold red] :confounded_face:",
+            subtitle=":boom: [bold red]No solution[/bold red] :boom:"
         )
     )
 
 
-def show_solution():
+def show_ok(params, solution):
     print(
         Panel(
-            "Below is the solution for the combination you entered.",
-            title=":boom: [bold green]You nailed it![/bold green] :boom:",
+            f"Solved in these {solution.steps} movements:\n{solution.path}",
+            title=f"[bold green] Here is the solution for case {params}[/bold green] :partying_face:",
+            subtitle=":boom: [green] You nailed it! [/green] :boom:"
         )
     )
+
+
+def show_solution(params, solution):
+    if isinstance(solution, OkResult):
+        show_ok(params, solution)
+    if isinstance(solution, NokResult):
+        show_nok(params, solution)
+
 
 
 def request_params():
-    print(Panel("Which are x y z values", title="PRETTY THIS AND MAKE IT PROMPT"))
-    return (5, 3, 4)
+    x = typer.prompt("Which is the capacity of jar x")
+    y = typer.prompt("Which is the capacity of jar y")
+    z = typer.prompt("Which amount of water do you wanna measure")
+    print(Panel(f"Jar-X: {x} - Jar-Y: {y}. Measuring {z} gallons...", title="Here is our data, then:"))
+
+    return int(x), int(y), int(z)
 
 
-def mock_process():
-    """implement jsonified status as data for the output and prettify it in cli with rich"""
-    j = Juggler(5, 3, 4)
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
-    print(j.jar_x, j.jar_y)
-    j.empty(j.jar_y)  # vacias jarra3
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
-    print(j.jar_x, j.jar_y)
-
-
-class NoSolutionException:
-    # TODO. move to excs module
-    pass
+def close():
+    print("You can use our API too! Check the [link]http://localhost:8000/docs[/link] to know how to!")
 
 
 def main():
     welcome()
-    x, y, z = request_params()
+    params = request_params()
+    solution = Checker(*params, Juggler).report()
+    show_solution(params, solution)
+    close()
 
-    try:
-        board = Juggler(x, y, z)
-        # board.solve()  # There should be another entity ('solver') that aplies the algorithm and return the list of statuses
-        # this is the mock replacing the printing until solver returns the status list
-        show_solution()
-        process = mock_process()
-    except NoSolutionException:
-        no_solution()
 
 
 if __name__ == "__main__":
