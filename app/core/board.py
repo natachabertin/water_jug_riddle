@@ -76,9 +76,7 @@ class Juggler:
             checking_status = statuses_to_check.popleft()
             checked_statuses.append(checking_status)
             if self.goal_achieved(checking_status):
-                path = self.retrieve_path(
-                    graph, checking_status, checked_statuses
-                )
+                path = self.retrieve_path(graph, checking_status, checked_statuses)
                 return len(path), path
             else:
                 next_statuses = self._get_next_statuses(
@@ -96,9 +94,7 @@ class Juggler:
             if checking_status == node:
                 path.append(node)
                 try:
-                    parent = list(graph.keys())[
-                        list(graph.values()).index([node])
-                    ]
+                    parent = list(graph.keys())[list(graph.values()).index([node])]
                 except ValueError:
                     parent = [k for k, v in graph.items() if node in v][0]
 
@@ -110,9 +106,7 @@ class Juggler:
             if parent == node:
                 path.append(parent)
                 try:
-                    parent = list(graph.keys())[
-                        list(graph.values()).index([parent])
-                    ]
+                    parent = list(graph.keys())[list(graph.values()).index([parent])]
                 except ValueError:
                     parent = [k for k, v in graph.items() if parent in v][0]
 

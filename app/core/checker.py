@@ -61,9 +61,7 @@ class Checker:
         if goal == 0 or (jar_y == 0 and jar_x == 0):
             raise UnsolvableException("Goal is zero or both jars are.")
         if self._is_not_goal_div_by_jars_gcd(jar_x, jar_y, goal):
-            raise UnsolvableException(
-                "Goal is not divisible by the GCD of both jars."
-            )
+            raise UnsolvableException("Goal is not divisible by the GCD of both jars.")
         if self._is_goal_sum_of_both_jars(jar_x, jar_y, goal):
             raise UnsolvableException(
                 "Goal is the sum of both jars, only can be measured separately"
@@ -85,15 +83,18 @@ class Checker:
     def _store_result(self, result):
         HISTORIC_RESULTS.update({self.params: result})
 
-    def _is_not_goal_div_by_jars_gcd(self, jar_x, jar_y, goal):
+    @staticmethod
+    def _is_not_goal_div_by_jars_gcd(jar_x, jar_y, goal):
         """Only is solvable if goal can be divided by
         the GCD of both jars capacity."""
         return goal % gcd(jar_x, jar_y) != 0
 
-    def _is_goal_sum_of_both_jars(self, jar_x, jar_y, goal):
+    @staticmethod
+    def _is_goal_sum_of_both_jars(jar_x, jar_y, goal):
         return jar_x + jar_y == goal
 
-    def _is_goal_gt_bigger_jar(self, jar_x, jar_y, goal):
+    @staticmethod
+    def _is_goal_gt_bigger_jar(jar_x, jar_y, goal):
         return goal > max(jar_x, jar_y)
 
 
