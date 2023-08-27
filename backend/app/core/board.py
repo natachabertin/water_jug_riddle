@@ -1,7 +1,7 @@
 from collections import deque
 
-from core.utils.enums import Status
-from core.utils.exceptions import UnsolvableException
+from app.core.utils.enums import Status
+from app.core.utils.exceptions import UnsolvableException
 
 
 class Jug:

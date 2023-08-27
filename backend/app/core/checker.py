@@ -1,9 +1,9 @@
 from math import gcd
 
-from core.board import Juggler
-from core.utils.exceptions import UnsolvableException
-from core.utils.models import NokResult
-from core.utils.models import OkResult
+from app.core.board import Juggler
+from app.core.utils.exceptions import UnsolvableException
+from app.core.utils.models import NokResult
+from app.core.utils.models import OkResult
 
 
 HISTORIC_RESULTS = dict()
