@@ -31,11 +31,12 @@ def show_nok(params, solution):
     )
 
 
-def show_solution(solution):
+def show_ok(params, solution):
     print(
         Panel(
-            "Below is the solution for the combination you entered.",
-            title=":boom: [bold green]You nailed it![/bold green] :boom:",
+            f"Solved in these {solution.steps} movements:\n{solution.path}",
+            title=f"[bold green] Here is the solution for case {params}[/bold green] :partying_face:",
+            subtitle=":boom: [green] You nailed it! [/green] :boom:"
         )
     )
 
@@ -49,13 +50,16 @@ def show_solution(params, solution):
 
 
 def request_params():
-    x = typer.prompt("Which is the capacity of jar x?")
-    y = typer.prompt("Which is the capacity of jar y?")
-    z = typer.prompt("Which amount of water do you wanna measure?")
+    x = typer.prompt("Which is the capacity of jar x")
+    y = typer.prompt("Which is the capacity of jar y")
+    z = typer.prompt("Which amount of water do you wanna measure")
     print(Panel(f"Jar-X: {x} - Jar-Y: {y}. Measuring {z} gallons...", title="Here is our data, then:"))
 
     return int(x), int(y), int(z)
 
+
+def close():
+    print("You can use our API too! Check the [link]http://localhost:8000/docs[/link] to know how to!")
 
 
 def main():
@@ -63,6 +67,7 @@ def main():
     params = request_params()
     solution = Checker(*params, Juggler).report()
     show_solution(params, solution)
+    close()
 
 
 
