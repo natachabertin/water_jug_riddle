@@ -76,7 +76,9 @@ class Juggler:
             checking_status = statuses_to_check.popleft()
             checked_statuses.append(checking_status)
             if self.goal_achieved(checking_status):
-                path = self.retrieve_path(graph, checking_status, checked_statuses)
+                path = self.retrieve_path(
+                    graph, checking_status, checked_statuses
+                )
                 return len(path), path
             else:
                 next_statuses = self._get_next_statuses(
@@ -88,13 +90,16 @@ class Juggler:
     @staticmethod
     def retrieve_path(graph, checking_status, checked_statuses):
         path = list()
+        parent = None
 
         for node in reversed(checked_statuses):
             if checking_status == node:
                 path.append(node)
                 try:
-                    parent = list(graph.keys())[list(graph.values()).index([node])]
-                except ValueError as e:
+                    parent = list(graph.keys())[
+                        list(graph.values()).index([node])
+                    ]
+                except ValueError:
                     parent = [k for k, v in graph.items() if node in v][0]
 
             if node == (0, 0):
@@ -105,8 +110,10 @@ class Juggler:
             if parent == node:
                 path.append(parent)
                 try:
-                    parent = list(graph.keys())[list(graph.values()).index([parent])]
-                except ValueError as e:
+                    parent = list(graph.keys())[
+                        list(graph.values()).index([parent])
+                    ]
+                except ValueError:
                     parent = [k for k, v in graph.items() if parent in v][0]
 
     def move_water_operations(self, origin_status):
@@ -171,8 +178,8 @@ if __name__ == "__main__":
         [7, 3, 2],
     ]
     unsolvable_cases = [
-        [1, 2, 3],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
-        [6, 4, 3],  # even both jars and goal odd >> should be covered as unsolvable
+        [1, 2, 3],  # goal eq sum of jars >> uns one jar but by the sum of two
+        [6, 4, 3],  # even both jars and goal odd >> covered as unsolvable
         [5, 3, 7],  # even both odd and goal even >> not divisible by gcd
         [0, 0, 0],  # all 0 >> you need a goal, not steps
         [10, 1, 0],  # goal 0, jugs not
@@ -184,7 +191,7 @@ if __name__ == "__main__":
             1000000000,
             2,
             3000000000,
-        ],  # goal eq sum of jars >> unsolvable in one jar but by the sum of two
+        ],  # goal eq sum of jars >> unsolv in one jar but by the sum of two
         [
             6,
             4,
@@ -194,10 +201,10 @@ if __name__ == "__main__":
         [123456789, 12345678, 1245],  # Goal is not divisible
     ]
     big_num_cases = [
-        [50, 30000000, 700],  # filling 50 by 50 up to 700, takes a little but finishes
+        [50, 30000000, 700],  # filling 50 by 50 up to 700
         [50, 300000000000, 700],  # filling 50 by 50 up to 700, takes a lot
-        [50, 3000000000000000000000000, 700],  # filling 50 by 50 up to 700, takes a lot
-        [700, 3000000000000000000000000, 50],  # filling 50 by 50 up to 700, takes a lot
+        [50, 3000000000000000000000000, 700],  # filling 50 by 50 up to 700
+        [700, 3000000000000000000000000, 50],  # filling 50 by 50 up to 700
         [159, 452, 5],
         [1111112, 2, 45],
     ]
