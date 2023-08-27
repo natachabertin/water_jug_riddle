@@ -46,23 +46,11 @@ def request_params():
     return int(x), int(y), int(z)
 
 
-class NoSolutionException:
-    # TODO. move to excs module
-    pass
-
 
 def main():
     welcome()
     x, y, z = request_params()
 
-    try:
-        board = Juggler(x, y, z)
-        # board.solve()  # There should be another entity ('solver') that aplies the algorithm and return the list of statuses
-        # this is the mock replacing the printing until solver returns the status list
-        show_solution()
-        process = mock_process()
-    except NoSolutionException:
-        no_solution()
 
 
 if __name__ == "__main__":
