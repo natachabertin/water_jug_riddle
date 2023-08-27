@@ -16,7 +16,7 @@ def welcome():
         We show you the result and the process.
         """,
             title="Hello! :hand:",
-            subtitle="Let's play!",
+            subtitle="Let's play! :partying_face:",
         )
     )
 
@@ -62,7 +62,7 @@ def main():
     welcome()
     params = request_params()
     solution = Checker(*params, Juggler).report()
-    show_solution(solution)
+    show_solution(params, solution)
 
 
 
