@@ -38,26 +38,12 @@ def show_solution():
 
 
 def request_params():
-    print(Panel("Which are x y z values", title="PRETTY THIS AND MAKE IT PROMPT"))
-    return (5, 3, 4)
+    x = typer.prompt("Which is the capacity of jar x?")
+    y = typer.prompt("Which is the capacity of jar y?")
+    z = typer.prompt("Which amount of water do you wanna measure?")
+    print(Panel(f"Jar-X: {x} - Jar-Y: {y}. Measuring {z} gallons...", title="Here is our data, then:"))
 
-
-def mock_process():
-    """implement jsonified status as data for the output and prettify it in cli with rich"""
-    j = Juggler(5, 3, 4)
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # sacas 3 a jarra3
-    print(j.jar_x, j.jar_y)
-    j.empty(j.jar_y)  # vacias jarra3
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # pasas 2 que  quedaban a j3
-    print(j.jar_x, j.jar_y)
-    j.fill(j.jar_x)  # llenas 5
-    print(j.jar_x, j.jar_y)
-    j.transfer(j.jar_x, j.jar_y)  # mandas j5 lo que entre a j3
-    print(j.jar_x, j.jar_y)
+    return int(x), int(y), int(z)
 
 
 class NoSolutionException:
