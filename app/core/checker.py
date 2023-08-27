@@ -84,7 +84,8 @@ class Checker:
         HISTORIC_RESULTS.update({self.params: result})
 
     def _is_not_goal_div_by_jars_gcd(self, jar_x, jar_y, goal):
-        """Only is solvable if goal can be divided by the GCD of both jars capacity."""
+        """Only is solvable if goal can be divided by
+        the GCD of both jars capacity."""
         return goal % gcd(jar_x, jar_y) != 0
 
     def _is_goal_sum_of_both_jars(self, jar_x, jar_y, goal):
