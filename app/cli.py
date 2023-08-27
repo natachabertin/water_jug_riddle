@@ -4,6 +4,7 @@ from rich.panel import Panel
 
 from core.board import Juggler
 from core.checker import Checker
+from core.utils.models import OkResult, NokResult
 
 
 def welcome():
@@ -20,11 +21,12 @@ def welcome():
     )
 
 
-def no_solution():
+def show_nok(params, solution):
     print(
         Panel(
-            "There is no solution for the combination you entered.",
-            title=":boom: [bold red]Wrong![/bold red] :boom:",
+            f"{solution.reason}",
+            title=f"[bold red] Case {params}[/bold red] :confounded_face:",
+            subtitle=":boom: [bold red]No solution[/bold red] :boom:"
         )
     )
 
@@ -36,6 +38,14 @@ def show_solution(solution):
             title=":boom: [bold green]You nailed it![/bold green] :boom:",
         )
     )
+
+
+def show_solution(params, solution):
+    if isinstance(solution, OkResult):
+        show_ok(params, solution)
+    if isinstance(solution, NokResult):
+        show_nok(params, solution)
+
 
 
 def request_params():
