@@ -3,6 +3,7 @@ from rich import print
 from rich.panel import Panel
 
 from core.board import Juggler
+from core.checker import Checker
 
 
 def welcome():
@@ -28,7 +29,7 @@ def no_solution():
     )
 
 
-def show_solution():
+def show_solution(solution):
     print(
         Panel(
             "Below is the solution for the combination you entered.",
@@ -49,7 +50,9 @@ def request_params():
 
 def main():
     welcome()
-    x, y, z = request_params()
+    params = request_params()
+    solution = Checker(*params, Juggler).report()
+    show_solution(solution)
 
 
 
