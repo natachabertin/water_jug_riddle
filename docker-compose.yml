@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   api:
-    build: .
+    build:
+      context: ./
     container_name: fastapi-app
     command: uvicorn app.server:app --reload --workers 1 --host 0.0.0.0 --port 8000
     ports:

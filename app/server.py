@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from core.board import Juggler
-from core.checker import Checker
+from app.core.board import Juggler
+from app.core.checker import Checker
 
 app = FastAPI()
 

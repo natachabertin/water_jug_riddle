@@ -1,7 +1,5 @@
 FROM python:3.10-slim-bullseye
 
-WORKDIR /app
-
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
 
@@ -12,7 +10,11 @@ RUN apt-get update \
 
 # install python dependencies
 RUN pip install --upgrade pip
-COPY ../requirements.txt ./requirements.txt
+COPY ./requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
-COPY ./app ./app
+
+RUN mkdir p- /api
+ADD . /api
+WORKDIR /api
+ENV PYTHONPATH "/api/app"
