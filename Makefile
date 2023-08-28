@@ -3,16 +3,19 @@
 build:
 	docker compose up --build -d
 
+build-nc:
+	docker compose build --no-cache
+
 run:
 	docker compose up -d
 
 stop:
 	docker compose stop
 
-docker-rm-container:
+rm-container:
 	docker container rm -f fastapi-app
 
-docker-bash:
+bash:
 	docker exec -it fastapi-app bash
 
 test:
